@@ -12372,6 +12372,20 @@ with self; {
     };
   };
 
+  IOSocketMulticast = buildPerlPackage {
+    pname = "IO-Socket-Multicast";
+    version = "1.12";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/B/BR/BRAMBLE/IO-Socket-Multicast-1.12.tar.gz";
+      sha256 = "70e8af4aa21d19bab5edd9f43a6b3d6277748a65145d46ff0ea2ae4c59495c72";
+    };
+    propagatedBuildInputs = [ IOInterface ];
+    meta = {
+      description = "Send and receive multicast messages";
+      license = with lib.licenses; [ artistic1 gpl1Plus ];
+    };
+  };
+
   IOSocketSSL = buildPerlPackage {
     pname = "IO-Socket-SSL";
     version = "2.068";
