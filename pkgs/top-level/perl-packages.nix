@@ -12257,6 +12257,19 @@ with self; {
     };
   };
 
+  IOInterface = buildPerlModule {
+    pname = "IO-Interface";
+    version = "1.09";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/L/LD/LDS/IO-Interface-1.09.tar.gz";
+      sha256 = "e63e81c52eb1e0e60ec2d983f5552d2493e117179925c96757f23c4bd9fa713a";
+    };
+    meta = {
+      description = "Access and modify network interface card configuration";
+      license = with lib.licenses; [ artistic1 gpl1Plus ];
+    };
+  };
+
   IOLockedFile = buildPerlPackage {
     pname = "IO-LockedFile";
     version = "0.23";
