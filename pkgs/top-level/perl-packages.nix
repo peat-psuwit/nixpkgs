@@ -24490,6 +24490,19 @@ with self; {
     };
   };
 
+  TestPodContent = buildPerlModule {
+    pname = "Test-Pod-Content";
+    version = "0.0.6";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/M/MK/MKUTTER/Test-Pod-Content-v0.0.6.tar.gz";
+      sha256 = "752bd838c75e113c176e36cb4a5f41b4b34b44bd13d607a92dc7bdf3c903975c";
+    };
+    meta = {
+      description = "Test Pod content";
+      license = with lib.licenses; [ artistic1 gpl1Plus ];
+    };
+  };
+
   TestPodCoverage = buildPerlPackage {
     pname = "Test-Pod-Coverage";
     version = "1.10";
