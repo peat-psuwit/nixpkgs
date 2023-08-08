@@ -21849,6 +21849,21 @@ with self; {
     };
   };
 
+  SOAPWSDL = buildPerlPackage {
+    pname = "SOAP-WSDL";
+    version = "3.004";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/S/SW/SWALTERS/SOAP-WSDL-3.004.tar.gz";
+      sha256 = "e2cc1e42eace8dbb384e509d04644191afcdd8df0fec144376cebafad3f15744";
+    };
+    buildInputs = [ CGI IOStringy Moose TestCPANMeta TestClass TestMockObject TestPodContent TestWarn TestXML XMLLibXML ];
+    propagatedBuildInputs = [ ClassLoad ClassStdFast LWP TemplateToolkit TermReadKey TimeDate URI XMLParser ];
+    meta = {
+      description = "SOAP with WSDL support";
+      license = with lib.licenses; [ artistic1 gpl1Plus ];
+    };
+  };
+
   SortNaturally = buildPerlPackage {
     pname = "Sort-Naturally";
     version = "1.03";
@@ -24502,7 +24517,7 @@ with self; {
       license = with lib.licenses; [ artistic1 gpl1Plus ];
     };
   };
-
+  
   TestPodCoverage = buildPerlPackage {
     pname = "Test-Pod-Coverage";
     version = "1.10";
