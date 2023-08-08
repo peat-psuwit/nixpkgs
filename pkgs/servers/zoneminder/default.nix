@@ -80,9 +80,10 @@ in stdenv.mkDerivation rec {
     '') addons)}
 
     for d in scripts/ZoneMinder onvif/{modules,proxy} ; do
-      substituteInPlace $d/CMakeLists.txt \
-        --replace 'DESTDIR="''${CMAKE_CURRENT_BINARY_DIR}/output"' "PREFIX=$out INSTALLDIRS=site"
-      sed -i '/^install/d' $d/CMakeLists.txt
+      sed -i \
+        -e s:'DESTDIR="\?''${CMAKE_CURRENT_BINARY_DIR}/output"\?':"PREFIX=$out INSTALLDIRS=site": \
+        -e '/^install/d' \
+        $d/CMakeLists.txt
     done
 
     substituteInPlace misc/CMakeLists.txt \
