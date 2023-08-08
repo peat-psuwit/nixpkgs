@@ -136,6 +136,7 @@ in stdenv.mkDerivation rec {
     # run-time dependencies not checked at build-time
     ClassStdFast DataDump DeviceSerialPort JSONMaybeXS LWPProtocolHttps NumberBytesHuman SysCPU SysMemInfo TimeDate
     CryptEksblowfish DataEntropy # zmupdate.pl
+    DataUUID SOAPLite SOAPWSDL IOSocketMulticast XMLLibXML # zmonvif-probe.pl, zmonvif-trigger.pl
   ]);
 
   nativeBuildInputs = [ cmake makeWrapper pkg-config ];
