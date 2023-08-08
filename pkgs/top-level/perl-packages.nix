@@ -26006,6 +26006,20 @@ with self; {
     };
   };
 
+  TestXML = buildPerlPackage {
+    pname = "Test-XML";
+    version = "0.08";
+    src = fetchurl {
+      url = "mirror://cpan/authors/id/S/SE/SEMANTICO/Test-XML-0.08.tar.gz";
+      sha256 = "eb54cc23cdec860d3ad8ac8a697cbf038d0dec95229912d975c301890ca83ee2";
+    };
+    propagatedBuildInputs = [ XMLParser XMLSemanticDiff ];
+    meta = {
+      description = "Compare XML in perl tests";
+      license = with lib.licenses; [ artistic1 gpl1Plus ];
+    };
+  };
+
   Throwable = buildPerlPackage {
     pname = "Throwable";
     version = "0.200013";
