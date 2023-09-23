@@ -1,9 +1,9 @@
-{ lib, stdenv, fetchFromGitHub, autoreconfHook, pkg-config, makeWrapper
+{ lib, stdenv, fetchFromGitHub, fetchpatch, callPackage, autoreconfHook, pkg-config, makeWrapper
 , CoreFoundation, IOKit, libossp_uuid
 , nixosTests
 , netdata-go-plugins
 , bash, curl, jemalloc, libuv, zlib, libyaml
-, libcap, libuuid, lm_sensors, protobuf
+, libcap, libuuid, lm_sensors, protobuf, python3
 , withCups ? false, cups
 , withDBengine ? true, lz4
 , withIpmi ? (!stdenv.isDarwin), freeipmi
@@ -15,7 +15,9 @@
 , withDebug ? false
 }:
 
-stdenv.mkDerivation rec {
+let
+  dashboardV1 = callPackage ./dashboard/default.nix {};
+in stdenv.mkDerivation rec {
   # Don't forget to update go.d.plugin.nix as well
   version = "1.42.2";
   pname = "netdata";
@@ -24,13 +26,18 @@ stdenv.mkDerivation rec {
     owner = "netdata";
     repo = "netdata";
     rev = "v${version}";
-    hash = "sha256-8L8PhPgNIHvw+Dcx2D6OE8fp2+GEYOc9wEIoPJSqXME=";
+    hash = "sha256-Fwt8TpWQ5pIuSZ4YJTDNppbvmSIXP+PM9b7L4F620fs=";
     fetchSubmodules = true;
+
+    # The v1 dashboard will be replaced with the self-built dashboard.
+    postFetch = ''
+      rm -rvf $out/web/gui/v1
+    '';
   };
 
   strictDeps = true;
 
-  nativeBuildInputs = [ autoreconfHook pkg-config makeWrapper protobuf ];
+  nativeBuildInputs = [ python3 autoreconfHook pkg-config makeWrapper protobuf ];
   # bash is only used to rewrite shebangs
   buildInputs = [ bash curl jemalloc libuv zlib libyaml ]
     ++ lib.optionals stdenv.isDarwin [ CoreFoundation IOKit libossp_uuid ]
@@ -53,6 +60,12 @@ stdenv.mkDerivation rec {
     # Avoid build-only inputs in closure leaked by configure command:
     #   https://github.com/NixOS/nixpkgs/issues/175693#issuecomment-1143344162
     ./skip-CONFIGURE_COMMAND.patch
+
+    # Allow re-writing the build files for self-built dashboard.
+    (fetchpatch {
+      url = "https://github.com/peat-psuwit/netdata/commit/71f69dc2f844e1f4ea3751400612b8438d9c635f.patch";
+      hash = "sha256-dpA9zODGIR7mXxokFORmPOGytcEkgDJAU3iFDg4Bio8=";
+    })
   ];
 
   # Guard against unused buld-time development inputs in closure. Without
@@ -84,6 +97,22 @@ stdenv.mkDerivation rec {
     ''}
   '';
 
+  postPatch = ''
+    # Copy the self-built dashboard into the tree, then re-write the Makefile.am using the (patched)
+    # dashboard bundling script.
+    cd web/gui
+    cp -rv ${dashboardV1} v1
+    chmod -R u+w v1/
+    ln -s ../.dashboard-notice.md v1/README.md
+
+    python3 <<EOF
+    import bundle_dashboard_v1
+    bundle_dashboard_v1.write_makefile()
+    EOF
+
+    cd ../..
+  '';
+  
   preConfigure = lib.optionalString (!stdenv.isDarwin) ''
     substituteInPlace collectors/python.d.plugin/python_modules/third_party/lm_sensors.py \
       --replace 'ctypes.util.find_library("sensors")' '"${lm_sensors.out}/lib/libsensors${stdenv.hostPlatform.extensions.sharedLibrary}"'
