@@ -28,7 +28,7 @@ composerInstallConfigureHook() {
             --no-interaction \
             ${composerNoDev:+--no-dev} \
             ${composerNoPlugins:+--no-plugins} \
-            ${composerNoScripts:+--no-scripts} \
+            --no-scripts \
             update
 
         mkdir -p $out
@@ -98,7 +98,7 @@ composerInstallBuildHook() {
       --no-interaction \
       ${composerNoDev:+--no-dev} \
       ${composerNoPlugins:+--no-plugins} \
-      ${composerNoScripts:+--no-scripts} \
+      --no-scripts \
       update
 
     echo "Finished composerInstallBuildHook"
